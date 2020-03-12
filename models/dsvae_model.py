@@ -119,7 +119,7 @@ class DSVAE(nn.Module):
     def encode(self, x, y, residual_method='subtract'):
         if residual_method == 'subtract':
             residual = x - y
-        if residual_method == 'none':
+        elif residual_method == 'none':
             residual = x
         else:
             raise ValueError("Other residual methods not implemented yet")
