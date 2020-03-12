@@ -21,7 +21,7 @@ def weights_init(m):
         nn.init.constant_(m.bias.data, 0.0)
         
 class DSVAE(nn.Module):
-    def __init__(self, z_dim, input_shape=[3,64,64], y_shape=[3,64,64], device=None):
+    def __init__(self, z_dim, input_shape, y_shape, device=None):
         super(DSVAE, self).__init__()
         self.z_dim = z_dim
         self.input_shape = input_shape
@@ -42,47 +42,44 @@ class DSVAE(nn.Module):
             self.cuda = True
         
         #ENCODER RESIDUAL
-        self.e1 = nn.Conv2d(self.input_nc, 64, 4, stride=2, padding=1) #[b,64,inh/2,inw/2]
+        self.e1 = nn.Conv2d(self.input_nc, 64, 4, stride=2, padding=1)  #[b,64,inh/2,inw/2]
         weights_init(self.e1)
         self.instance_norm_e1 = nn.InstanceNorm2d(num_features=64, affine=False)
 
-        self.e2 = nn.Conv2d(64, 128, 4, stride=2, padding=1) #[b,128,inh/4,inw/4]
+        self.e2 = nn.Conv2d(64, 128, 4, stride=2, padding=1)  #[b,128,inh/4,inw/4]
         weights_init(self.e2)
         self.instance_norm_e2 = nn.InstanceNorm2d(num_features=128, affine=False)
 
-        self.e3 = nn.Conv2d(128, 256, 4, stride=2, padding=1) #[b,256,inh/8,inw/8]
+        self.e3 = nn.Conv2d(128, 256, 2, stride=2, padding=0)  #[b,256,inh/8,inw/8]
         weights_init(self.e3)
         self.instance_norm_e3 = nn.InstanceNorm2d(num_features=256, affine=False)
 
-        self.e4 = nn.Conv2d(256, 512, 4, stride=2, padding=1) #[b,512,inh/16,inw/16]
+        self.e4 = nn.Conv2d(256, 512, 2, stride=2, padding=0)  #[b,512,inh/16,inw/16]
         weights_init(self.e4)
         self.instance_norm_e4 = nn.InstanceNorm2d(num_features=512, affine=False)
-
-        self.fc1 = nn.Linear(512*int(self.input_height/16)*int(self.input_width/16), 256)
-        weights_init(self.fc1)
         
-        self.fc_mean = nn.Linear(256, z_dim)
+        self.fc_mean = nn.Linear(512*int(self.input_height/16)*int(self.input_width/16), z_dim)
         weights_init(self.fc_mean)
-        self.fc_var = nn.Linear(256, z_dim)
+        self.fc_var = nn.Linear(512*int(self.input_height/16)*int(self.input_width/16), z_dim)
         weights_init(self.fc_var)
 
         #DECODER
         self.d1 = nn.Conv2d(self.y_nc, 64, 4, stride=2, padding=1) #[b,64,yh/2,yw/2]
         weights_init(self.d1)
 
-        self.d2 = nn.Conv2d(64, 128, 4, stride=2, padding=1) #[b, 128,yh/4,yw/4]
+        self.d2 = nn.Conv2d(64, 128, 4, stride=2, padding=1)  #[b, 128,yh/4,yw/4]
         weights_init(self.d2)
         self.mu2 = nn.Linear(self.z_dim, 128*int(self.y_height/4)*int(self.y_width/4))
         self.sig2 = nn.Linear(self.z_dim, 128*int(self.y_height/4)*int(self.y_width/4))
         self.instance_norm_d2 = nn.InstanceNorm2d(num_features=128, affine=False)
 
-        self.d3 = nn.Conv2d(128, 256, 4, stride=2, padding=1) #[b, 256,yh/8,yw/8]
+        self.d3 = nn.Conv2d(128, 256, 2, stride=2, padding=0)  #[b, 256,yh/8,yw/8]
         weights_init(self.d3)
         self.mu3 = nn.Linear(self.z_dim, 256*int(self.y_height/8)*int(self.y_width/8))
         self.sig3 = nn.Linear(self.z_dim, 256*int(self.y_height/8)*int(self.y_width/8))
         self.instance_norm_d3 = nn.InstanceNorm2d(num_features=256, affine=False)
 
-        self.d4 = nn.Conv2d(256, 512, 4, stride=2, padding=1) #[b, 512,yh/16,yw/16]
+        self.d4 = nn.Conv2d(256, 512, 2, stride=2, padding=0)  #[b, 512,yh/16,yw/16]
         weights_init(self.d4)
         self.mu4 = nn.Linear(self.z_dim, 512*int(self.y_height/16)*int(self.y_width/16))
         self.sig4 = nn.Linear(self.z_dim, 512*int(self.y_height/16)*int(self.y_width/16))
@@ -90,24 +87,27 @@ class DSVAE(nn.Module):
         
         self.fc2 = nn.Linear(512*int(self.y_height/16)*int(self.y_width/16), 512*int(self.y_height/16)*int(self.y_width/16))
         weights_init(self.fc2)
+        self.mu5 = nn.Linear(self.z_dim, 512*int(self.y_height/16)*int(self.y_width/16))
+        self.sig5 = nn.Linear(self.z_dim, 512*int(self.y_height/16)*int(self.y_width/16))
+        self.instance_norm_d5 = nn.InstanceNorm2d(num_features=512, affine=False) 
         
         self.d5 = nn.ConvTranspose2d(512, 256, 4, stride=2, padding=1) #[b, 256,yh/8,yw/8]
         weights_init(self.d5)
-        self.mu5 = nn.Linear(self.z_dim, 256*int(self.y_height/8)*int(self.y_width/8))
-        self.sig5 = nn.Linear(self.z_dim, 256*int(self.y_height/8)*int(self.y_width/8))
-        self.instance_norm_d5 = nn.InstanceNorm2d(num_features=256, affine=False) 
+        self.mu6 = nn.Linear(self.z_dim, 256*int(self.y_height/8)*int(self.y_width/8))
+        self.sig6 = nn.Linear(self.z_dim, 256*int(self.y_height/8)*int(self.y_width/8))
+        self.instance_norm_d6 = nn.InstanceNorm2d(num_features=256, affine=False) 
         
         self.d6 = nn.ConvTranspose2d(256, 128, 4, stride=2, padding=1) #[b, 128,yh/4,yw/4]
         weights_init(self.d6)
-        self.mu6 = nn.Linear(self.z_dim, 128*int(self.y_height/4)*int(self.y_width/4))
-        self.sig6 = nn.Linear(self.z_dim, 128*int(self.y_height/4)*int(self.y_width/4))
-        self.instance_norm_d6 = nn.InstanceNorm2d(num_features=128, affine=False) 
+        self.mu7 = nn.Linear(self.z_dim, 128*int(self.y_height/4)*int(self.y_width/4))
+        self.sig7 = nn.Linear(self.z_dim, 128*int(self.y_height/4)*int(self.y_width/4))
+        self.instance_norm_d7 = nn.InstanceNorm2d(num_features=128, affine=False) 
         
         self.d7 = nn.ConvTranspose2d(128, 64, 4, stride=2, padding=1) #[b, 64,yh/2,yw/2]
         weights_init(self.d7)
-        self.mu7 = nn.Linear(self.z_dim, 64*int(self.y_height/2)*int(self.y_width/2))
-        self.sig7 = nn.Linear(self.z_dim, 64*int(self.y_height/2)*int(self.y_width/2))
-        self.instance_norm_d7 = nn.InstanceNorm2d(num_features=64, affine=False) 
+        self.mu8 = nn.Linear(self.z_dim, 64*int(self.y_height/2)*int(self.y_width/2))
+        self.sig8 = nn.Linear(self.z_dim, 64*int(self.y_height/2)*int(self.y_width/2))
+        self.instance_norm_d8 = nn.InstanceNorm2d(num_features=64, affine=False) 
         
         self.d8 = nn.ConvTranspose2d(64, self.y_nc, 4, stride=2, padding=1) #[b, ync,yh,yw]
         weights_init(self.d8)
@@ -119,13 +119,15 @@ class DSVAE(nn.Module):
     def encode(self, x, y, residual_method='subtract'):
         if residual_method == 'subtract':
             residual = x - y
+        if residual_method == 'none':
+            residual = x
         else:
             raise ValueError("Other residual methods not implemented yet")
         h = self.leakyrelu(self.instance_norm_e1(self.e1(residual)))   
         h = self.leakyrelu(self.instance_norm_e2(self.e2(h)))    
         h = self.leakyrelu(self.instance_norm_e3(self.e3(h)))     
         h = self.leakyrelu(self.instance_norm_e4(self.e4(h)))
-        h = self.leakyrelu(self.fc1(h.view(-1,512*int(self.input_height/16)*int(self.input_width/16))))
+        h = h.view(-1,512*int(self.input_height/16)*int(self.input_width/16))
         return self.fc_mean(h), F.softplus(self.fc_var(h))
 
     def reparametrize(self, mu, var):
@@ -152,20 +154,23 @@ class DSVAE(nn.Module):
         sig = self.sig4(z).reshape(-1, 512, int(self.y_height/16), int(self.y_width/16))
         h = self.leakyrelu(sig*self.instance_norm_d4(self.d4(h)) + mu) 
        
+        mu = self.mu5(z).reshape(-1, 512, int(self.y_height/16), int(self.y_width/16))
+        sig = self.sig5(z).reshape(-1, 512, int(self.y_height/16), int(self.y_width/16))
         h = self.fc2(h.view(-1,512*int(self.y_height/16)*int(self.y_width/16)))
         h = h.reshape(-1, 512, int(self.y_height/16), int(self.y_width/16))
+        h = self.relu(sig*self.instance_norm_d5(h) + mu)
+          
+        mu = self.mu6(z).reshape(-1, 256, int(self.y_height/8), int(self.y_width/8))
+        sig = self.sig6(z).reshape(-1, 256, int(self.y_height/8), int(self.y_width/8))
+        h = self.relu(sig*self.instance_norm_d6(self.d5(h)) + mu)
         
-        mu = self.mu5(z).reshape(-1, 256, int(self.y_height/8), int(self.y_width/8))
-        sig = self.sig5(z).reshape(-1, 256, int(self.y_height/8), int(self.y_width/8))
-        h = self.leakyrelu(sig*self.instance_norm_d5(self.d5(h)) + mu)
+        mu = self.mu7(z).reshape(-1, 128, int(self.y_height/4), int(self.y_width/4))
+        sig = self.sig7(z).reshape(-1, 128, int(self.y_height/4), int(self.y_width/4))
+        h = self.relu(sig*self.instance_norm_d7(self.d6(h)) + mu)
         
-        mu = self.mu6(z).reshape(-1, 128, int(self.y_height/4), int(self.y_width/4))
-        sig = self.sig6(z).reshape(-1, 128, int(self.y_height/4), int(self.y_width/4))
-        h = self.leakyrelu(sig*self.instance_norm_d6(self.d6(h)) + mu)
-        
-        mu = self.mu7(z).reshape(-1, 64, int(self.y_height/2), int(self.y_width/2))
-        sig = self.sig7(z).reshape(-1, 64, int(self.y_height/2), int(self.y_width/2))
-        h = self.leakyrelu(sig*self.instance_norm_d7(self.d7(h)) + mu)
+        mu = self.mu8(z).reshape(-1, 64, int(self.y_height/2), int(self.y_width/2))
+        sig = self.sig8(z).reshape(-1, 64, int(self.y_height/2), int(self.y_width/2))
+        h = self.relu(sig*self.instance_norm_d8(self.d7(h)) + mu)
         
         return self.sigmoid(self.d8(h))                               
     

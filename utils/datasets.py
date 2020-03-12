@@ -33,16 +33,16 @@ class DSVAE_DATA_HR(Dataset):
         x_hr = self.x_hr[idx]
         y = self.y[idx]
         return x, x_hr, y
-    
-class DATA_HR(Dataset):
+
+class VAE_DATA(Dataset):
     """DSVAE HR dataset."""
 
-    def __init__(self, x_hr):
-        self.x_hr = x_hr
+    def __init__(self, x):
+        self.x = x
 
     def __len__(self):
-        return self.x_hr.shape[0]
+        return self.x.shape[0]
 
     def __getitem__(self, idx):
-        x_hr = self.x_hr[idx]
-        return x_hr
+        x = self.x[idx]
+        return x

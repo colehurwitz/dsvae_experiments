@@ -23,10 +23,10 @@ import numpy as np
 import os
 import image_utils
 
-class CelebAHR(ground_truth_data.GroundTruthData):
+class CelebA(ground_truth_data.GroundTruthData):
   """Dummy image data set of random noise used for testing."""
 
-  def __init__(self, celeba_path, num_samples, res=128):
+  def __init__(self, celeba_path, num_samples, res=64):
     self.factor_updated = False
     self.res = res
     self.num_samples = num_samples
