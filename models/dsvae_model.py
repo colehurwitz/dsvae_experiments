@@ -50,17 +50,17 @@ class DSVAE(nn.Module):
         weights_init(self.e2)
         self.instance_norm_e2 = nn.InstanceNorm2d(num_features=128, affine=False)
 
-        self.e3 = nn.Conv2d(128, 256, 2, stride=2, padding=0)  #[b,256,inh/8,inw/8]
+        self.e3 = nn.Conv2d(128, 256, 4, stride=2, padding=1)  #[b,256,inh/8,inw/8]
         weights_init(self.e3)
         self.instance_norm_e3 = nn.InstanceNorm2d(num_features=256, affine=False)
 
-        self.e4 = nn.Conv2d(256, 512, 2, stride=2, padding=0)  #[b,512,inh/16,inw/16]
+        self.e4 = nn.Conv2d(256, 256, 4, stride=2, padding=1)  #[b,512,inh/16,inw/16]
         weights_init(self.e4)
-        self.instance_norm_e4 = nn.InstanceNorm2d(num_features=512, affine=False)
+        self.instance_norm_e4 = nn.InstanceNorm2d(num_features=256, affine=False)
         
-        self.fc_mean = nn.Linear(512*int(self.input_height/16)*int(self.input_width/16), z_dim)
+        self.fc_mean = nn.Linear(256*int(self.input_height/16)*int(self.input_width/16), z_dim)
         weights_init(self.fc_mean)
-        self.fc_var = nn.Linear(512*int(self.input_height/16)*int(self.input_width/16), z_dim)
+        self.fc_var = nn.Linear(256*int(self.input_height/16)*int(self.input_width/16), z_dim)
         weights_init(self.fc_var)
 
         #DECODER
@@ -79,19 +79,19 @@ class DSVAE(nn.Module):
         self.sig3 = nn.Linear(self.z_dim, 256*int(self.y_height/8)*int(self.y_width/8))
         self.instance_norm_d3 = nn.InstanceNorm2d(num_features=256, affine=False)
 
-        self.d4 = nn.Conv2d(256, 512, 2, stride=2, padding=0)  #[b, 512,yh/16,yw/16]
+        self.d4 = nn.Conv2d(256, 256, 2, stride=2, padding=0)  #[b, 512,yh/16,yw/16]
         weights_init(self.d4)
-        self.mu4 = nn.Linear(self.z_dim, 512*int(self.y_height/16)*int(self.y_width/16))
-        self.sig4 = nn.Linear(self.z_dim, 512*int(self.y_height/16)*int(self.y_width/16))
-        self.instance_norm_d4 = nn.InstanceNorm2d(num_features=512, affine=False)
+        self.mu4 = nn.Linear(self.z_dim, 256*int(self.y_height/16)*int(self.y_width/16))
+        self.sig4 = nn.Linear(self.z_dim, 256*int(self.y_height/16)*int(self.y_width/16))
+        self.instance_norm_d4 = nn.InstanceNorm2d(num_features=256, affine=False)
         
-        self.fc2 = nn.Linear(512*int(self.y_height/16)*int(self.y_width/16), 512*int(self.y_height/16)*int(self.y_width/16))
+        self.fc2 = nn.Linear(256*int(self.y_height/16)*int(self.y_width/16), 256*int(self.y_height/16)*int(self.y_width/16))
         weights_init(self.fc2)
-        self.mu5 = nn.Linear(self.z_dim, 512*int(self.y_height/16)*int(self.y_width/16))
-        self.sig5 = nn.Linear(self.z_dim, 512*int(self.y_height/16)*int(self.y_width/16))
-        self.instance_norm_d5 = nn.InstanceNorm2d(num_features=512, affine=False) 
+        self.mu5 = nn.Linear(self.z_dim, 256*int(self.y_height/16)*int(self.y_width/16))
+        self.sig5 = nn.Linear(self.z_dim, 256*int(self.y_height/16)*int(self.y_width/16))
+        self.instance_norm_d5 = nn.InstanceNorm2d(num_features=256, affine=False) 
         
-        self.d5 = nn.ConvTranspose2d(512, 256, 4, stride=2, padding=1) #[b, 256,yh/8,yw/8]
+        self.d5 = nn.ConvTranspose2d(256, 256, 4, stride=2, padding=1) #[b, 256,yh/8,yw/8]
         weights_init(self.d5)
         self.mu6 = nn.Linear(self.z_dim, 256*int(self.y_height/8)*int(self.y_width/8))
         self.sig6 = nn.Linear(self.z_dim, 256*int(self.y_height/8)*int(self.y_width/8))
@@ -127,7 +127,7 @@ class DSVAE(nn.Module):
         h = self.leakyrelu(self.instance_norm_e2(self.e2(h)))    
         h = self.leakyrelu(self.instance_norm_e3(self.e3(h)))     
         h = self.leakyrelu(self.instance_norm_e4(self.e4(h)))
-        h = h.view(-1,512*int(self.input_height/16)*int(self.input_width/16))
+        h = h.view(-1,256*int(self.input_height/16)*int(self.input_width/16))
         return self.fc_mean(h), F.softplus(self.fc_var(h))
 
     def reparametrize(self, mu, var):
@@ -150,14 +150,14 @@ class DSVAE(nn.Module):
         sig = self.sig3(z).reshape(-1, 256, int(self.y_height/8), int(self.y_width/8))
         h = self.leakyrelu(sig*self.instance_norm_d3(self.d3(h)) + mu)
         
-        mu = self.mu4(z).reshape(-1, 512, int(self.y_height/16), int(self.y_width/16))
-        sig = self.sig4(z).reshape(-1, 512, int(self.y_height/16), int(self.y_width/16))
+        mu = self.mu4(z).reshape(-1, 256, int(self.y_height/16), int(self.y_width/16))
+        sig = self.sig4(z).reshape(-1, 256, int(self.y_height/16), int(self.y_width/16))
         h = self.leakyrelu(sig*self.instance_norm_d4(self.d4(h)) + mu) 
        
-        mu = self.mu5(z).reshape(-1, 512, int(self.y_height/16), int(self.y_width/16))
-        sig = self.sig5(z).reshape(-1, 512, int(self.y_height/16), int(self.y_width/16))
-        h = self.fc2(h.view(-1,512*int(self.y_height/16)*int(self.y_width/16)))
-        h = h.reshape(-1, 512, int(self.y_height/16), int(self.y_width/16))
+        mu = self.mu5(z).reshape(-1, 256, int(self.y_height/16), int(self.y_width/16))
+        sig = self.sig5(z).reshape(-1, 256, int(self.y_height/16), int(self.y_width/16))
+        h = self.fc2(h.view(-1,256*int(self.y_height/16)*int(self.y_width/16)))
+        h = h.reshape(-1, 256, int(self.y_height/16), int(self.y_width/16))
         h = self.relu(sig*self.instance_norm_d5(h) + mu)
           
         mu = self.mu6(z).reshape(-1, 256, int(self.y_height/8), int(self.y_width/8))
