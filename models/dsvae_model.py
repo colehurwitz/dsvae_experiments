@@ -73,13 +73,13 @@ class DSVAE(nn.Module):
         self.sig2 = nn.Linear(self.z_dim, 128*int(self.y_height/4)*int(self.y_width/4))
         self.instance_norm_d2 = nn.InstanceNorm2d(num_features=128, affine=False)
 
-        self.d3 = nn.Conv2d(128, 256, 2, stride=2, padding=0)  #[b, 256,yh/8,yw/8]
+        self.d3 = nn.Conv2d(128, 128, 2, stride=2, padding=0)  #[b, 256,yh/8,yw/8]
         weights_init(self.d3)
-        self.mu3 = nn.Linear(self.z_dim, 256*int(self.y_height/8)*int(self.y_width/8))
-        self.sig3 = nn.Linear(self.z_dim, 256*int(self.y_height/8)*int(self.y_width/8))
-        self.instance_norm_d3 = nn.InstanceNorm2d(num_features=256, affine=False)
+        self.mu3 = nn.Linear(self.z_dim, 128*int(self.y_height/8)*int(self.y_width/8))
+        self.sig3 = nn.Linear(self.z_dim, 128*int(self.y_height/8)*int(self.y_width/8))
+        self.instance_norm_d3 = nn.InstanceNorm2d(num_features=128, affine=False)
 
-        self.d4 = nn.Conv2d(256, 256, 2, stride=2, padding=0)  #[b, 512,yh/16,yw/16]
+        self.d4 = nn.Conv2d(128, 256, 2, stride=2, padding=0)  #[b, 512,yh/16,yw/16]
         weights_init(self.d4)
         self.mu4 = nn.Linear(self.z_dim, 256*int(self.y_height/16)*int(self.y_width/16))
         self.sig4 = nn.Linear(self.z_dim, 256*int(self.y_height/16)*int(self.y_width/16))
@@ -91,13 +91,13 @@ class DSVAE(nn.Module):
         self.sig5 = nn.Linear(self.z_dim, 256*int(self.y_height/16)*int(self.y_width/16))
         self.instance_norm_d5 = nn.InstanceNorm2d(num_features=256, affine=False) 
         
-        self.d5 = nn.ConvTranspose2d(256, 256, 4, stride=2, padding=1) #[b, 256,yh/8,yw/8]
+        self.d5 = nn.ConvTranspose2d(256, 128, 4, stride=2, padding=1) #[b, 256,yh/8,yw/8]
         weights_init(self.d5)
-        self.mu6 = nn.Linear(self.z_dim, 256*int(self.y_height/8)*int(self.y_width/8))
-        self.sig6 = nn.Linear(self.z_dim, 256*int(self.y_height/8)*int(self.y_width/8))
-        self.instance_norm_d6 = nn.InstanceNorm2d(num_features=256, affine=False) 
+        self.mu6 = nn.Linear(self.z_dim, 128*int(self.y_height/8)*int(self.y_width/8))
+        self.sig6 = nn.Linear(self.z_dim, 128*int(self.y_height/8)*int(self.y_width/8))
+        self.instance_norm_d6 = nn.InstanceNorm2d(num_features=128, affine=False) 
         
-        self.d6 = nn.ConvTranspose2d(256, 128, 4, stride=2, padding=1) #[b, 128,yh/4,yw/4]
+        self.d6 = nn.ConvTranspose2d(128, 128, 4, stride=2, padding=1) #[b, 128,yh/4,yw/4]
         weights_init(self.d6)
         self.mu7 = nn.Linear(self.z_dim, 128*int(self.y_height/4)*int(self.y_width/4))
         self.sig7 = nn.Linear(self.z_dim, 128*int(self.y_height/4)*int(self.y_width/4))
@@ -146,8 +146,8 @@ class DSVAE(nn.Module):
         sig = self.sig2(z).reshape(-1, 128, int(self.y_height/4), int(self.y_width/4))
         h = self.leakyrelu(sig*self.instance_norm_d2(self.d2(h)) + mu)
         
-        mu = self.mu3(z).reshape(-1, 256, int(self.y_height/8), int(self.y_width/8))
-        sig = self.sig3(z).reshape(-1, 256, int(self.y_height/8), int(self.y_width/8))
+        mu = self.mu3(z).reshape(-1, 128, int(self.y_height/8), int(self.y_width/8))
+        sig = self.sig3(z).reshape(-1, 128, int(self.y_height/8), int(self.y_width/8))
         h = self.leakyrelu(sig*self.instance_norm_d3(self.d3(h)) + mu)
         
         mu = self.mu4(z).reshape(-1, 256, int(self.y_height/16), int(self.y_width/16))
@@ -160,8 +160,8 @@ class DSVAE(nn.Module):
         h = h.reshape(-1, 256, int(self.y_height/16), int(self.y_width/16))
         h = self.relu(sig*self.instance_norm_d5(h) + mu)
           
-        mu = self.mu6(z).reshape(-1, 256, int(self.y_height/8), int(self.y_width/8))
-        sig = self.sig6(z).reshape(-1, 256, int(self.y_height/8), int(self.y_width/8))
+        mu = self.mu6(z).reshape(-1, 128, int(self.y_height/8), int(self.y_width/8))
+        sig = self.sig6(z).reshape(-1, 128, int(self.y_height/8), int(self.y_width/8))
         h = self.relu(sig*self.instance_norm_d6(self.d5(h)) + mu)
         
         mu = self.mu7(z).reshape(-1, 128, int(self.y_height/4), int(self.y_width/4))
