@@ -36,6 +36,7 @@ class DSVAE_ADD(nn.Module):
         else:
             self.device = device
             self.cuda = True
+            print(device)
         
         #ENCODER RESIDUAL
         self.e1 = nn.Conv2d(self.y_nc, 32, 4, stride=2, padding=1)  #[b,64,inh/2,inw/2]
@@ -143,24 +144,4 @@ def loss_function(x_hat, x, mu, var, reconstruction_function):
     return recon_loss + KLD, recon_loss, KLD
 
 
-
-
-# # Reconstruction + KL divergence losses summed over all elements and batch
-# def negative_ELBO(recon_X, X, mu, var, likelihood_var=):
-#     device = recon_X.get_device()
-#     batch_size = recon_X.shape[0]
-#     normal = torch.distributions.Normal(X,likelihood_var)
-#     NLL = -1*torch.sum(normal.log_prob(recon_X))/batch_size
-    
-#     m_q = mu
-#     m_p = torch.zeros(m_q.shape).to(device)
-#     var_q = var
-#     var_p = (torch.zeros(var_q.shape) + 1**2).to(device)
-#     KLD = kl_divergence_normal(m_q, var_q, m_p, var_p)/batch_size
-   
-#     return NLL + KLD, NLL, KLD
-
-# def kl_divergence_normal(mu_q, var_q, mu_p, var_p):
-#     kld = torch.sum(0.5*(torch.log(var_p) - torch.log(var_q)) + torch.div(var_q + (mu_q - mu_p)**2, 2*var_p) - 0.5)
-#     return kld
 

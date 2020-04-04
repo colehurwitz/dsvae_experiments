@@ -184,7 +184,7 @@ class DSVAE(nn.Module):
         return x_hat, mu, var
 
 reconstruction_function = nn.BCELoss(reduction='sum')
-def loss_function(x_hat, x, mu, var):
+def loss_function(x_hat, x, mu, var,reconstruction_function):
     BCE = reconstruction_function(x_hat, x)/x_hat.shape[0]
 
     # https://arxiv.org/abs/1312.6114 (Appendix B)
