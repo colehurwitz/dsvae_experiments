@@ -142,6 +142,3 @@ def loss_function(x_hat, x, mu, var, reconstruction_function):
     KLD = torch.sum(KLD_element).mul_(-0.5)/x_hat.shape[0] 
 
     return recon_loss + KLD, recon_loss, KLD
-
-
-
