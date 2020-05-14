@@ -23,7 +23,7 @@ from unet.unet_model import UNet
 from torch.nn import functional as F
 
 loss_func = torch.nn.MSELoss(reduction='sum')
-def train(epoch, state_dict, model, optimizer, train_loader, val_loader, args, logger):
+def train(epoch, state_dict, model, optimizer, train_loader, valid_loader, args, logger):
     model.train()
     
     # Train loop
@@ -51,8 +51,8 @@ def train(epoch, state_dict, model, optimizer, train_loader, val_loader, args, l
 
         # Update logger & wandb
         logger.update(state_dict['itr'], loss.cpu().item(), itr_time)
-        wandb.log({'train_loss': loss.item()}, commit=False)
-        wandb.log({'train_itr_time': itr_time}, commit=True)    
+        wandb.log({'train_loss': loss.item()})
+        wandb.log({'train_itr_time': itr_time})    
 
         # Save images, logger, weights on save_every interval
         if not state_dict['itr'] % args.save_every:

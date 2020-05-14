@@ -14,7 +14,7 @@
 ###  the following parameters will get you two nodes with 4 V100's each
 ###  note the run time limit is currently only 12 hours, it will be increased
 ###  next week
-#SBATCH --gres=gpu:4
+#SBATCH --gres=gpu:1
 #SBATCH --gpus-per-node=1
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=4
@@ -74,7 +74,7 @@ python \
       --workers=4 \
       --lr=1e-3 \
       --num_epochs=100 \
-      --output_dir=$HOME2/UNET/results/mask_64_128 \
+      --output_dir=$HOME2/UNET/results/mask_64_128/ \
       --project=UNET \
       --save_every=500 \
       --valid_every=1000 \
