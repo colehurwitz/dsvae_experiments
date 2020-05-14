@@ -51,8 +51,8 @@ def train(epoch, state_dict, model, optimizer, train_loader, valid_loader, args,
 
         # Update logger & wandb
         logger.update(state_dict['itr'], loss.cpu().item(), itr_time)
-        wandb.log({'train_loss': loss.item()})
-        wandb.log({'train_itr_time': itr_time})    
+        wandb.log({'train_loss': loss.item()}, commit=False)
+        wandb.log({'train_itr_time': itr_time}, commit=True)    
 
         # Save images, logger, weights on save_every interval
         if not state_dict['itr'] % args.save_every:
@@ -73,11 +73,13 @@ def train(epoch, state_dict, model, optimizer, train_loader, valid_loader, args,
             torch.save(logger, args.output_dir + '/logger.pth')
         
         if not state_dict['itr'] % args.valid_every:
+                print("here")
                 model.eval()
                 val_losses = []
 
                 with torch.no_grad(): 
-                    for data in tqdm(valid_loader):
+                    for data in valid_loader:
+                        print("here")
                         x_val = data[0]
                         y_val = F.interpolate(F.interpolate(x_val, args.low_resolution, mode="bilinear"), args.image_size, mode="bilinear")
                         x_val = x_val.to(args.device)

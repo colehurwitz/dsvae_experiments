@@ -18,9 +18,8 @@
 #SBATCH --gpus-per-node=1
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=4
-#SBATCH --mem=0
+#SBATCH --mem=500g
 #SBATCH --time=24:00:00
-#SBATCH --exclusive
 #SBATCH -p sched_system_all 
 
 ## User python environment
@@ -68,7 +67,7 @@ python \
       /home/churwitz/dsvae_experiments/train_UNET.py \
       --train_dir=/data/ImageNet/ILSVRC2012/train/ \
       --valid_dir=/data/ImageNet/ILSVRC2012/val/ \
-      --batch_size=128 \
+      --batch_size=64 \
       --image_size=128 \
       --low_resolution=64 \
       --workers=4 \
