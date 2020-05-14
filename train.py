@@ -100,5 +100,5 @@ def train(epoch, state_dict, model, optimizer, train_loader, val_loader, args, l
                     val_losses.clear()
             
                 model.train()
-    # Increment iteration number
-    state_dict['itr'] += 1       
+        # Increment iteration number
+        state_dict['itr'] += 1       
