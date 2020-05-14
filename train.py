@@ -23,7 +23,7 @@ from unet.unet_model import UNet
 from torch.nn import functional as F
 
 loss_func = torch.nn.MSELoss(reduction='sum')
-def train(epoch, state_dict, tmodel, optimizer, train_loader, val_loader, args, LOGGER):
+def train(epoch, state_dict, model, optimizer, train_loader, val_loader, args, logger):
     model.train()
     
     # Train loop

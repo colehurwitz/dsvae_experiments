@@ -73,4 +73,4 @@ if __name__ == "__main__":
     state_dict = {'itr': 0}
     
     for epoch in range(args.num_epochs):
-        train(epoch, state_dict, model, optimizer, train_loader, valid_loader, args, LOGGER)
+        train(epoch, state_dict, model, optimizer, train_loader, valid_loader, args, logger)
