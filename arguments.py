@@ -34,6 +34,24 @@ def parse_args():
                         help='Project name for wandb')
     parser.add_argument('--num_epochs_save', type=int, default=1,
                         help='Interval # of epochs to save model')
+
+    parser.add_argument('--save_every', type=int, default=500,
+                        help='Save every X iterations')
+    parser.add_argument('--valid_every', type=int, default=1000,
+                        help='Evaluate validation dataset every X iterations')    
+    parser.add_argument('--log_every', type=int, default=50,
+                        help='Log train metrics every X iterations')   
+
+    # Resume
+    parser.add_argument('--resume', action='store_true', default=False,
+                        help='Resume training? (default: %(default)s)')
+    parser.add_argument('--checkpoint', type=int, default=0,
+                        help='Resume iteration X (default: %(default)s)')
+
+    # Model weights for 128 (when training 256)
+    parser.add_argument('--model_weights', type=str, default='',
+                        help='Path to model weights(default: %(default)s)')
+
     
     args = parser.parse_args()
 

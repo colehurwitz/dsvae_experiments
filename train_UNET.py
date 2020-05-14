@@ -2,7 +2,6 @@ import os, sys
 import torch
 import torchvision.transforms as transforms
 import wandb
-import logging
 
 from arguments import parse_args
 from dataset import ImagenetDataset
@@ -23,18 +22,19 @@ import torchvision
 from misc import merge
 from unet.unet_model import UNet
 from torch.nn import functional as F
+from logger import Logger
 
 
 if __name__ == "__main__":
     # Set up logger
-    logging.basicConfig(stream=sys.stdout, level=logging.DEBUG, format='%(asctime)s %(message)s')
-    LOGGER = logging.getLogger(__name__)
-    
-    # Accelerate training with benchmark true
-    torch.backends.cudnn.benchmark = True
+    logger = Logger()
 
     # Parse arguments & log
     args = parse_args()
+    logger.update_args(args)
+    
+    # Accelerate training with benchmark true
+    torch.backends.cudnn.benchmark = True
 
     # Create output directory
     try:
@@ -69,6 +69,8 @@ if __name__ == "__main__":
     model = UNet(n_channels=3, n_classes=3, bilinear=True)
     model.to(args.device)
     optimizer = torch.optim.Adam(params=model.parameters(), lr=args.lr, weight_decay=0)
+
+    state_dict = {'itr': 0}
     
     for epoch in range(args.num_epochs):
-        train(epoch, model, optimizer, train_loader, valid_loader, args, LOGGER)
+        train(epoch, state_dict, model, optimizer, train_loader, valid_loader, args, LOGGER)
