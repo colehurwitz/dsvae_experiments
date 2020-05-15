@@ -66,8 +66,7 @@ if __name__ == "__main__":
                                                shuffle=True, num_workers=args.workers,
                                                pin_memory=True, drop_last=True)
     
-    # model = UNet(n_channels=3, n_classes=3, bilinear=True)
-    model = RESNET CODE
+    model = UNet(n_channels=3, n_classes=3, bilinear=True)
     model.to(args.device)
     optimizer = torch.optim.Adam(params=model.parameters(), lr=args.lr, weight_decay=0)
 
