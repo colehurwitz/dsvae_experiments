@@ -73,7 +73,7 @@ python \
       --workers=4 \
       --lr=1e-3 \
       --num_epochs=100 \
-      --output_dir=$HOME2/RESNET/results/mask_128_256/ \
+      --output_dir=$HOME2/UNET/results/mask_128_256/ \
       --project=UNET_256 \
       --save_every=500 \
       --valid_every=1000 \
