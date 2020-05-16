@@ -23,6 +23,7 @@ from misc import merge
 from unet.unet_model import UNet
 from torch.nn import functional as F
 from logger import Logger
+from UNET_utils import load_UNET_checkpoint
 
 
 if __name__ == "__main__":
@@ -69,6 +70,11 @@ if __name__ == "__main__":
     model = UNet(n_channels=3, n_classes=3, bilinear=True)
     model.to(args.device)
     optimizer = torch.optim.Adam(params=model.parameters(), lr=args.lr, weight_decay=0)
+    
+    if args.resume:
+        print('Loading weights & resuming from iteration {}'.format(args.checkpoint))
+        model, optimizer, logger = load_UNET_checkpoint(model, optimizer, '256', args)
+        state_dict['itr'] = args.checkpoint
 
     state_dict = {'itr': 0}
     

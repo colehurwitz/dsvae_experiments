@@ -23,6 +23,8 @@ from misc import merge
 from unet.unet_model import UNet
 from torch.nn import functional as F
 from logger import Logger
+from UNET_utils import load_UNET_checkpoint
+
 
 
 if __name__ == "__main__":
@@ -47,8 +49,8 @@ if __name__ == "__main__":
     
     # Create datasets
     default_transform = transforms.Compose([
-                            transforms.Resize(args.image_size),
                             transforms.CenterCrop(args.image_size),
+                            transforms.Resize(args.image_size),
                             transforms.ToTensor()
                         ])
 
@@ -71,6 +73,11 @@ if __name__ == "__main__":
     optimizer = torch.optim.Adam(params=model.parameters(), lr=args.lr, weight_decay=0)
 
     state_dict = {'itr': 0}
+
+    if args.resume:
+        print('Loading weights & resuming from iteration {}'.format(args.checkpoint))
+        model, optimizer, logger = load_UNET_checkpoint(model, optimizer, '128', args)
+        state_dict['itr'] = args.checkpoint
     
     for epoch in range(args.num_epochs):
         train(epoch, state_dict, model, optimizer, train_loader, valid_loader, args, logger)

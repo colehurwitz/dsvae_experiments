@@ -56,6 +56,7 @@ def train(epoch, state_dict, model, optimizer, train_loader, valid_loader, args,
 
         # Save images, logger, weights on save_every interval
         if not state_dict['itr'] % args.save_every:
+            start_time_save = time.time() 
             # Save images
             save_image(x_mask.cpu(), args.output_dir + 'train_real_mask_itr{}.png'.format(state_dict['itr']))
             save_image(x_mask_hat.cpu(), args.output_dir + 'train_recon_mask_itr{}.png'.format(state_dict['itr']))
@@ -71,36 +72,43 @@ def train(epoch, state_dict, model, optimizer, train_loader, valid_loader, args,
             
             # Save logger 
             torch.save(logger, args.output_dir + '/logger.pth')
+
+            end_time_save = time.time()
+            itr_time_save = end_time_save - start_time_save
+            wandb.log({'itr_time_save': itr_time_save}, commit=False)
         
         if not state_dict['itr'] % args.valid_every:
-                print("here")
-                model.eval()
-                val_losses = []
+            start_time_eval = time.time() 
+            model.eval()
+            val_losses = []
 
-                with torch.no_grad(): 
-                    for data in valid_loader:
-                        print("here")
-                        x_val = data[0]
-                        y_val = F.interpolate(F.interpolate(x_val, args.low_resolution, mode="bilinear"), args.image_size, mode="bilinear")
-                        x_val = x_val.to(args.device)
-                        y_val = y_val.to(args.device)    
-                        x_mask_val = x_val - y_val
-                        x_mask_hat_val = model(y_val)
-                        x_hat_val = y_val + x_mask_hat_val
-                        loss_val = loss_func(x_mask_hat_val, x_mask_val)
-                        val_losses.append(loss_val.item())
+            with torch.no_grad(): 
+                for data in tqdm(valid_loader):
+                    x_val = data[0]
+                    y_val = F.interpolate(F.interpolate(x_val, args.low_resolution, mode="bilinear"), args.image_size, mode="bilinear")
+                    x_val = x_val.to(args.device)
+                    y_val = y_val.to(args.device)    
+                    x_mask_val = x_val - y_val
+                    x_mask_hat_val = model(y_val)
+                    x_hat_val = y_val + x_mask_hat_val
+                    loss_val = loss_func(x_mask_hat_val, x_mask_val)
+                    val_losses.append(loss_val.item())
 
-                    save_image(x_mask_val.cpu(), args.output_dir + 'val_real_mask_itr{}.png'.format(state_dict['itr']))
-                    save_image(x_mask_hat_val.cpu(), args.output_dir + 'val_recon_mask_itr{}.png'.format(state_dict['itr']))
-                    save_image(y_val.cpu(), args.output_dir + 'val_low_img_128_itr{}.png'.format(state_dict['itr']))
-                    save_image(x_hat_val.cpu(), args.output_dir + 'val_recon_img_128_itr{}.png'.format(state_dict['itr']))
-                    save_image(x_val.cpu(), args.output_dir + 'val_real_img_128_itr{}.png'.format(state_dict['itr']))
+                save_image(x_mask_val.cpu(), args.output_dir + 'val_real_mask_itr{}.png'.format(state_dict['itr']))
+                save_image(x_mask_hat_val.cpu(), args.output_dir + 'val_recon_mask_itr{}.png'.format(state_dict['itr']))
+                save_image(y_val.cpu(), args.output_dir + 'val_low_img_128_itr{}.png'.format(state_dict['itr']))
+                save_image(x_hat_val.cpu(), args.output_dir + 'val_recon_img_128_itr{}.png'.format(state_dict['itr']))
+                save_image(x_val.cpu(), args.output_dir + 'val_real_img_128_itr{}.png'.format(state_dict['itr']))
 
-                    val_losses_mean = np.mean(val_losses)
-                    wandb.log({'val_loss': val_losses_mean}, commit=True)
-                    logger.update_val_loss(state_dict['itr'], val_losses_mean)
-                    val_losses.clear()
-            
-                model.train()
+                val_losses_mean = np.mean(val_losses)
+                wandb.log({'val_loss': val_losses_mean}, commit=True)
+                logger.update_val_loss(state_dict['itr'], val_losses_mean)
+                val_losses.clear()
+
+            model.train()
+
+            end_time_eval = time.time()
+            itr_time_eval = end_time_eval - start_time_eval
+            wandb.log({'itr_time_eval': itr_time_eval}, commit=False)
         # Increment iteration number
-        state_dict['itr'] += 1       
+        state_dict['itr'] += 1
