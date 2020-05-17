@@ -3,7 +3,7 @@ import torch
 import torchvision.transforms as transforms
 import wandb
 
-from arguments import parse_args
+from arguments_256 import parse_args
 from dataset import ImagenetDataset
 from models import VQVAE
 from train_256 import train_256
@@ -71,12 +71,12 @@ if __name__ == "__main__":
     model.to(args.device)
     optimizer = torch.optim.Adam(params=model.parameters(), lr=args.lr, weight_decay=0)
     
+    state_dict = {'itr': 0}
+    
     if args.resume:
         print('Loading weights & resuming from iteration {}'.format(args.checkpoint))
         model, optimizer, logger = load_UNET_checkpoint(model, optimizer, '256', args)
         state_dict['itr'] = args.checkpoint
-
-    state_dict = {'itr': 0}
     
     for epoch in range(args.num_epochs):
         train_256(epoch, state_dict, model, optimizer, train_loader, valid_loader, args, logger)

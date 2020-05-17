@@ -77,7 +77,7 @@ def train(epoch, state_dict, model, optimizer, train_loader, valid_loader, args,
             itr_time_save = end_time_save - start_time_save
             wandb.log({'itr_time_save': itr_time_save}, commit=False)
         
-        if not state_dict['itr'] % args.valid_every:
+        if not state_dict['itr'] % args.valid_every and state_dict['itr'] != 0:
             start_time_eval = time.time() 
             model.eval()
             val_losses = []

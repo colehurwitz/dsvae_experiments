@@ -72,7 +72,7 @@ def train_256(epoch, state_dict, model, optimizer, train_loader, valid_loader, a
             # Save logger 
             torch.save(logger, args.output_dir + '/logger.pth')
         
-        if not state_dict['itr'] % args.valid_every:
+        if not state_dict['itr'] % args.valid_every and state_dict['itr'] != 0:
                 print("here")
                 model.eval()
                 val_losses = []
