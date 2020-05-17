@@ -3,9 +3,10 @@ import torch
 import torchvision.transforms as transforms
 import wandb
 
-from arguments import parse_args
 from dataset import ImagenetDataset
 from models import VQVAE
+
+from arguments import parse_args
 from train import train
 
 import sys

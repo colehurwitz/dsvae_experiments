@@ -76,7 +76,7 @@ python \
       --output_dir=$HOME2/UNET/results/mask_64_128/ \
       --project=UNET \
       --save_every=500 \
-      --valid_every=1000 \
+      --valid_every=5000 \
 
 echo "Run completed at:- "
 date
