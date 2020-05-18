@@ -5,9 +5,9 @@
 ###  cancel jobs using command 'scancel <jobnum>'
 ###  outputs are in  multi_torch_<jobnum>.out and multi_torch_<jobnum>.err
 
-#SBATCH -J train_UNET
-#SBATCH -o train_UNET_%j.out
-#SBATCH -e train_UNET_%j.err
+#SBATCH -J train_VAE
+#SBATCH -o train_VAE_%j.out
+#SBATCH -e train_VAE_%j.err
 
 #SBATCH --mail-user=churwitz@mit.edu
 #SBATCH --mail-type=ALL
@@ -64,19 +64,16 @@ date
 ###  outputs are in  multi_torch_<jobnum>.out and multi_torch_<jobnum>.err 
 
 python \
-      /home/churwitz/dsvae_experiments/train_UNET.py \
+      /home/churwitz/dsvae_experiments/train_VAE.py \
       --train_dir=/data/ImageNet/ILSVRC2012/train/ \
-      --valid_dir=/data/ImageNet/ILSVRC2012/val/ \
       --batch_size=64 \
       --image_size=128 \
-      --low_resolution=64 \
       --workers=4 \
       --lr=1e-3 \
       --num_epochs=100 \
-      --output_dir=$HOME2/UNET/results/mask_64_128/ \
-      --project=UNET \
+      --output_dir=$HOME2/VAE/results/VAE_128/ \
+      --project=VAE \
       --save_every=500 \
-      --valid_every=5000 \
 
 echo "Run completed at:- "
 date

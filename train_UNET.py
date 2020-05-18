@@ -65,7 +65,7 @@ if __name__ == "__main__":
     # Create validation dataset
     
     valid_data = dset.ImageFolder(root=args.valid_dir, transform=default_transform)
-    valid_loader = torch.utils.data.DataLoader(train_dataset, batch_size=64,
+    valid_loader = torch.utils.data.DataLoader(valid_data, batch_size=64,
                                                shuffle=True, num_workers=args.workers,
                                                pin_memory=True, drop_last=True)
     
