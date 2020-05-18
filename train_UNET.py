@@ -43,7 +43,7 @@ if __name__ == "__main__":
     try:
         os.mkdir(args.output_dir)
     except:
-        raise Exception('Cannot create output directory')
+        print('Output directory already exists')
 
     # Initialize wandb
     wandb.init(project=args.project)

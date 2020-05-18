@@ -78,7 +78,7 @@ def train_256(epoch, state_dict, model, optimizer, train_loader, valid_loader, a
                 val_losses = []
 
                 with torch.no_grad(): 
-                    for data in valid_loader:
+                    for data in tqdm(valid_loader):
                         print("here")
                         x_val = data[0]
                         y_val = F.interpolate(F.interpolate(x_val, args.low_resolution, mode="bilinear"), args.image_size, mode="bilinear")

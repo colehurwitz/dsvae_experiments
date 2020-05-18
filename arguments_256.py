@@ -36,9 +36,9 @@ def parse_args():
     parser.add_argument('--valid_every', type=int, default=5000,
                         help='Evaluate validation dataset every X iterations')    
     # Resume
-    parser.add_argument('--resume', action='store_true', default=False,
+    parser.add_argument('--resume', action='store_true', default=True,
                         help='Resume training? (default: %(default)s)')
-    parser.add_argument('--checkpoint', type=int, default=0,
+    parser.add_argument('--checkpoint', type=int, default=25000,
                         help='Resume iteration X (default: %(default)s)')
 
     
