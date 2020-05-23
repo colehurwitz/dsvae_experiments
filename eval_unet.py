@@ -36,7 +36,7 @@ def eval_unet_128_256(model_128, model_256, data_loader, data_type, args):
             x_hat_128 = y_128 + x_mask_hat_128
 
             #Upsample to 256 then pass through second UNET
-            y_256 = F.interpolate(x_hat_256, 256, mode="bilinear")
+            y_256 = F.interpolate(x_hat_128, 256, mode="bilinear")
             y_256 = y_256.to(args.device)
             x_mask_hat_256 = model_256(y_256)
             x_hat_256 = y_256 + x_mask_hat_256
