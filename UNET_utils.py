@@ -15,7 +15,13 @@ def load_UNET_checkpoint(model, optimizer, model_type, args):
     return model, optimizer, logger
 
 def load_UNET_weights(model, model_type, args):
-    checkpoint = torch.load(args.output_dir + '/UNET_pixel_model_{}_itr{}.pth'.format(model_type, args.checkpoint), map_location=args.device)
+    if model_type == '128':
+        checkpoint_path = args.model_128_weights
+    elif model_type == '256':
+        checkpoint_path = args.model_256_weights
+    else:
+        raise ValueError("Improper model type")
+    checkpoint = torch.load(checkpoint_path, map_location=args.device)
     model.load_state_dict(checkpoint['model_state_dict'])
 
     del checkpoint
