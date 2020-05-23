@@ -25,7 +25,7 @@ from unet.unet_model import UNet
 from torch.nn import functional as F
 from logger import Logger
 from UNET_utils import load_UNET_checkpoint, load_UNET_weights
-from eval import eval_unet_128_256
+from eval_unet import eval_unet_128_256
 
 if __name__ == "__main__":
     # Set up logger
