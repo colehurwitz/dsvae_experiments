@@ -14,6 +14,15 @@ def load_UNET_checkpoint(model, optimizer, model_type, args):
 
     return model, optimizer, logger
 
+def load_UNET_weights(model, model_type, args):
+    checkpoint = torch.load(args.output_dir + '/UNET_pixel_model_{}_itr{}.pth'.format(model_type, args.checkpoint), map_location=args.device)
+    model.load_state_dict(checkpoint['model_state_dict'])
+
+    del checkpoint
+    torch.cuda.empty_cache()
+
+    return model
+
 
 ############### WT FUNCTIONS ###############
 def wt(vimg, filters, levels=1):
