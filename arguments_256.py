@@ -38,7 +38,7 @@ def parse_args():
     # Resume
     parser.add_argument('--resume', action='store_true', default=True,
                         help='Resume training? (default: %(default)s)')
-    parser.add_argument('--checkpoint', type=int, default=25000,
+    parser.add_argument('--checkpoint', type=int, default=178000,
                         help='Resume iteration X (default: %(default)s)')
 
     

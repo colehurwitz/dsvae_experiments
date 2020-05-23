@@ -4,10 +4,10 @@ import numpy as np
 import pywt
 
 def load_UNET_checkpoint(model, optimizer, model_type, args):
-    checkpoint = torch.load(args.output_dir + '/UNET_pixel_model_{}_itr{}.pth'.format(folder_str, model_type, args.checkpoint), map_location=args.device)
+    checkpoint = torch.load(args.output_dir + '/UNET_pixel_model_{}_itr{}.pth'.format(model_type, args.checkpoint), map_location=args.device)
     model.load_state_dict(checkpoint['model_state_dict'])
     optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
-    logger = torch.load(args.output_dir + '/UNET/results/mask_{}_d1/logger.pth'.format(folder_str))
+    logger = torch.load(args.output_dir + '/logger.pth')
 
     del checkpoint
     torch.cuda.empty_cache()
