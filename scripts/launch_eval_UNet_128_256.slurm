@@ -68,8 +68,8 @@ python eval_unet_128_256.py \
 --batch_size 100 --image_size 256 \
 --output_dir $HOME2/UNET/results/unet_128_256_eval_2/ \
 --project_name unet_full_imagenet_128_256_eval \
---model_128_weights /nobackup/users/churwitz/UNET/results/mask_64_128/UNET_pixel_model_128_itr428500.pth \
---model_256_weights /nobackup/users/churwitz/UNET/results/mask_128_256/UNET_pixel_model_256_itr125000.pth
+--model_128_weights /nobackup/users/churwitz/UNET/results/mask_64_128/UNET_pixel_model_128_itr615000.pth \
+--model_256_weights /nobackup/users/churwitz/UNET/results/mask_128_256/UNET_pixel_model_256_itr178000.pth
 
 echo "Run completed at:- "
 date
