@@ -57,14 +57,14 @@ if __name__ == "__main__":
     train_dataset = dset.ImageFolder(root=args.train_dir, transform=default_transform)
 
     train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=args.batch_size,
-                                               shuffle=True, num_workers=args.workers,
+                                               shuffle=False, num_workers=args.workers,
                                                pin_memory=True, drop_last=True)
 
     # Create validation dataset
     valid_dataset = dset.ImageFolder(root=args.valid_dir, transform=default_transform)
 
     valid_loader = torch.utils.data.DataLoader(valid_dataset, batch_size=args.batch_size,
-                                               shuffle=True, num_workers=args.workers,
+                                               shuffle=False, num_workers=args.workers,
                                                pin_memory=True, drop_last=True)
 
     model_128 = UNet(n_channels=3, n_classes=3, bilinear=True)
