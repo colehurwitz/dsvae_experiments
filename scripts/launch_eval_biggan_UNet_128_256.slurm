@@ -63,13 +63,14 @@ date
 ###  cancel jobs using command 'scancel <jobnum>'
 ###  outputs are in  multi_torch_<jobnum>.out and multi_torch_<jobnum>.err 
 
-python eval_unet_128_256.py \
---train_dir /data/ImageNet/ILSVRC2012/train/ --valid_dir /data/ImageNet/ILSVRC2012/val/ \
+python eval_biggan_unet_128_256.py \
 --batch_size 100 --image_size 256 \
---output_dir $HOME2/UNET/results/unet_128_256_eval_1/ \
+--output_dir $HOME2/UNET/results/unet_128_256_eval/ \
 --project_name unet_full_imagenet_128_256_eval \
 --model_128_weights /nobackup/users/churwitz/UNET/results/mask_64_128/UNET_pixel_model_128_itr209500.pth \
---model_256_weights /nobackup/users/churwitz/UNET/results/mask_128_256/UNET_pixel_model_256_itr71500.pth
+--model_256_weights /nobackup/users/churwitz/UNET/results/mask_128_256/UNET_pixel_model_256_itr71500.pth \
+--sample_file $HOME2/BigGAN-PyTorch1/results_deep_hdf5/samples/BigGAN_WT64_BigGANdeep_seed0_Gch128_Dch128_Gd2_Dd2_bs256_nDa2_nGa2_Glr1.0e-04_Dlr4.0e-04_Gnlinplace_relu_Dnlinplace_relu_Ginitortho_Dinitortho_Gattn32_Dattn32_Gshared_hier_ema/samples_z04.npz
+
 
 echo "Run completed at:- "
 date
