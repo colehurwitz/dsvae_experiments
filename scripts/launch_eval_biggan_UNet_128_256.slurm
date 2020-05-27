@@ -69,7 +69,7 @@ python eval_biggan_unet_128_256.py \
 --project_name unet_full_imagenet_128_256_eval \
 --model_128_weights /nobackup/users/churwitz/UNET/results/mask_64_128/UNET_pixel_model_128_itr209500.pth \
 --model_256_weights /nobackup/users/churwitz/UNET/results/mask_128_256/UNET_pixel_model_256_itr71500.pth \
---sample_file $HOME2/BigGAN-PyTorch1/results_deep_hdf5/samples/BigGAN_WT64_BigGANdeep_seed0_Gch128_Dch128_Gd2_Dd2_bs256_nDa2_nGa2_Glr1.0e-04_Dlr4.0e-04_Gnlinplace_relu_Dnlinplace_relu_Ginitortho_Dinitortho_Gattn32_Dattn32_Gshared_hier_ema/samples_z04.npz
+--sample_file /nobackup/users/swhan/ibm_ckpt/biggan/samples/BigGAN_I64_hdf5_seed0_Gch64_Dch64_bs128_nDa4_nGa4_Glr1.0e-04_Dlr4.0e-04_Gnlinplace_relu_Dnlinplace_relu_Ginitortho_Dinitortho_Gattn32_Dattn32_Gshared_hier_ema/samples.npz
 
 
 echo "Run completed at:- "
