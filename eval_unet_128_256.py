@@ -12,15 +12,12 @@ from train import train
 import sys
 import os
 sys.path.insert(0, 'Pytorch-UNet')
-sys.path.insert(0, 'utils')
 sys.path.insert(0, 'models')
 import numpy as np
 import matplotlib.pyplot as plt
-from plotting_utils import plot_pytorch_images, make_grid
 import torchvision.datasets as dset
 import torchvision.utils as vutils
 import torchvision
-from misc import merge
 from unet.unet_model import UNet
 from torch.nn import functional as F
 from logger import Logger
