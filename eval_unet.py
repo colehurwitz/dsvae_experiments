@@ -8,14 +8,14 @@ import h5py
 from UNET_utils import *
 
 # Creating HDF5 dataset of real and reconstructed, given real 64x64 TL patch
-def eval_unet_128_256(model_128, model_256, data_loader, data_type, args):
+def eval_unet_128_256(model_128, model_256, data_loader, args):
     model_128.eval()
     model_256.eval()
 
 
     # Create hdf5 dataset
-    f1 = h5py.File(args.output_dir + data_type + '/recon_img.hdf5', 'w')
-    f2 = h5py.File(args.output_dir + data_type + '/real_img.hdf5', 'w')
+    f1 = h5py.File(args.output_dir  + '/recon_img.hdf5', 'w')
+    f2 = h5py.File(args.output_dir  + '/real_img.hdf5', 'w')
 
     recon_dataset = f1.create_dataset('data', shape=(50000, 3, 256, 256), dtype=np.float32, fillvalue=0)
     real_dataset = f2.create_dataset('data', shape=(50000, 3, 256, 256), dtype=np.float32, fillvalue=0)
