@@ -8,7 +8,7 @@ import h5py
 from UNET_utils import *
 
 # Creating HDF5 dataset of real and reconstructed, given real 64x64 TL patch
-def eval_unet_128_256(model_128, model_256, data_loader, data_type, args):
+def eval_biggan_unet_128_256(model_128, model_256, data_loader, data_type, args):
     model_128.eval()
     model_256.eval()
 
