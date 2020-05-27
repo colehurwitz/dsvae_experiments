@@ -3,7 +3,6 @@ import torch
 import torchvision.transforms as transforms
 import wandb
 
-from dataset import ImagenetDataset
 from models import VQVAE
 
 from arguments_eval import parse_args
